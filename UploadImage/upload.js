@@ -1,32 +1,51 @@
+const cloudinary = require("cloudinary").v2;
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const multer = require("multer");
-const path = require("path"); // Import path module
+const dotenv = require("dotenv");
+dotenv.config({ path: "./config.env" });
 
-// Configure multer storage
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "./uploads"); // Ensure 'uploads' directory exists
-  },
-  filename: function (req, file, cb) {
-    cb(
-      null,
-      `${file.fieldname}_${Date.now()}${path.extname(file.originalname)}`
-    );
+cloudinary.config({
+  cloud_name: "dftxzejur",
+  api_key: "898869341729411",
+  api_secret: "z5ZV2lKjAE0PUiyCvjvqjGMzB3w",
+});
+
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: "uploads", // folder name in Cloudinary
+    format: async (req, file) => "png", // supports promises as well
+    public_id: (req, file) => `${file.fieldname}_${Date.now()}`, // generated file name
   },
 });
 
-// Initialize multer with storage configuration
+// Initialize multer with Cloudinary storage configuration
 const upload = multer({ storage: storage });
 
 const uploadFile = (req, res) => {
   console.log(req.body);
   console.log(req.file);
+
   if (!req.file) {
     return res.status(400).send("No file uploaded");
   }
-  return res.status(200).json({
-    Status: "Success",
-    image_url: `http://localhost:8080/uploads/${req.file.filename}`,
-  });
+
+  // Upload file to Cloudinary
+  cloudinary.uploader.upload(
+    req.file.path,
+    { folder: "uploads" },
+    (error, result) => {
+      if (error) {
+        console.error("Upload to Cloudinary failed:", error);
+        return res.status(500).send("Upload to Cloudinary failed");
+      }
+
+      return res.status(200).json({
+        Status: "Success",
+        image_url: result.secure_url, // Cloudinary URL
+      });
+    }
+  );
 };
 
 module.exports = {

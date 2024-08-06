@@ -2,20 +2,23 @@ const express = require("express");
 const mongoose = require("mongoose");
 const Payment = require("./Payment");
 const Auth = require("./Auth/Auth");
+const dotenv = require("dotenv");
 const User = require("./Model/User");
 const Invoice = require("./invoice/invoice");
 const cors = require("cors");
-const Product = require("../Backend/Product/Product");
+const Product = require("./Product/Product");
 const { upload, uploadFile } = require("./UploadImage/upload"); // Import upload and handler
 const path = require("path");
 const app = express();
 const sendEmail = require("./Auth/Email");
+dotenv.config({ path: "./config.env" });
 
 app.use(express.urlencoded({ extended: false }));
 app.use(cors({ origin: "*" }));
 app.use(express.json());
 
 const port = 8080;
+console.log(process.env.SECRET);
 
 // MongoDb Connection
 const connectDb = async () => {
