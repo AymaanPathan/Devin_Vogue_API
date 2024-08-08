@@ -85,8 +85,8 @@ exports.createStripePayment = async (req, res) => {
   const session = await stripe.checkout.sessions.create({
       line_items: stripeProducts,
       mode: "payment",
-      success_url: `https://devin-vogue-frontend-v1.vercel.app/payment/success`,
-      cancel_url: `https://devin-vogue-frontend-v1.vercel.app/payment/cancel`,
+      success_url: `https://devin-vogue-frontend-v1.vercel.app/`,
+      cancel_url: `https://devin-vogue-frontend-v1.vercel.app/`,
       customer_email: findUser.email,
     });
 
