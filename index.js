@@ -45,11 +45,7 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 const Router = express.Router();
 
 // Purchased Routes
-Router.get("/", (req, res) => {
-  res.status(200).json({
-    "Message": "Hello"
-  });
-});
+Router.get("/", Payment.createPurchasedItems);
 
 
 Router.get("/myOrders", Auth.protect, Product.myOrders);
